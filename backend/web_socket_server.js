@@ -9,7 +9,7 @@ const { init, broadcast } = require("./utils/utils");
 const urlPath = path.join(__dirname, "database", "urls.json");
 dotenv.config();
 
-const checkAllUrl = async (Store) => {
+const checkAllUrl = async () => {
   try {
     const urls = await fs.readFile(urlPath, "utf8");
     const parsedUrls = JSON.parse(urls);
@@ -18,10 +18,10 @@ const checkAllUrl = async (Store) => {
       parsedUrls.map(async (url) => {
         const response = await checkUrl(url);
         broadcast(response);
-        Store.push(response);
+        // Store.push(response);
       }),
     );
-    StoreRecord(Store);
+    // StoreRecord(Store);
     broadcast({ type: "checking" });
   } catch (err) {
     console.error("WebSocket polling error:", err.message);
@@ -33,15 +33,15 @@ const checkAllUrl = async (Store) => {
 };
 async function setupWebSocket(wss) {
   init(wss);
-  let Store = [];
+  // let Store = [];
   wss.on("connection", (ws) => {
-    checkAllUrl(Store);
+    checkAllUrl();
   });
 
   setInterval(
     async () => {
-      Store = [];
-      checkAllUrl(Store);
+      // Store = [];
+      checkAllUrl();
     },
     process.env.TIME || 60 * 1000,
   );
