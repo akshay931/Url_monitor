@@ -1,50 +1,46 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>URL HEALTH MONITOR</title>
     <script src="scripts.js" defer></script>
-</head>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <div class="info">
+          <h1>URL HEALTH MONITOR</h1>
 
-<body>
-    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+          <h4>WebSocket: <span id="websocket_status">Connecting...</span></h4>
+          <h4>Page will fetch latest update every 60 second</h4>
 
-        <div>
-            <h1>URL HEALTH MONITOR</h1>
-
-            <h4>WebSocket: <span id="websocket_status">Connecting...</span></h4>
-            <h4>Page will fetch latest update every 60 second </h4>
-
-            <h4 id="status"></h4>
+          <h4 id="status"></h4>
         </div>
 
-        <div style="border:1px solid #ccc;padding:10px;border-radius:5px;">
-            <h3>Add URL</h3>
+        <div class="card">
+          <h3>Add URL</h3>
 
-            <input type="text" id="urlInput" placeholder="https://example.com">
+          <input type="text" id="urlInput" placeholder="https://example.com" />
 
-            <button id="addBtn">
-                Add
-            </button>
+          <button id="addBtn">Add URL</button>
         </div>
+      </div>
 
-    </div>
-    <table border="1">
+      <table>
         <thead>
-            <tr>
-                <th>URL</th>
-                <th>Status</th>
-                <th>Status Code</th>
-                <th>Response Time</th>
-                <th>Error</th>
-            </tr>
+          <tr>
+            <th>URL</th>
+            <th>Status</th>
+            <th>Status Code</th>
+            <th>Response Time</th>
+            <th>Error</th>
+          </tr>
         </thead>
+
         <tbody id="content-display"></tbody>
-    </table>
-
-
-</body>
-
+      </table>
+    </div>
+  </body>
 </html>
