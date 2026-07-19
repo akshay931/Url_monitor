@@ -388,6 +388,11 @@ The `backend/database` directory can be mounted as a Docker volume so that `urls
 
 ---
 
+# A 1-Line Setup:
+
+```bash
+docker compose up
+```
 # Deployment Sketch
 
 ## Current MVP Deployment
@@ -482,26 +487,44 @@ For a production-ready deployment, I would separate the application into managed
       | Registered URLs     |          | Monitoring History   |
       +---------------------+          +----------------------+
 ```
+## Infrastructure-as-Code (Hypothetical)
 
-## Infrastructure-as-Code (Example)
+If deployed on AWS, the infrastructure could be provisioned using Terraform.
 
-A minimal Docker-based deployment could be provisioned using Docker Compose:
+```hcl
+provider "aws" {
+  region = "ap-south-1"
+}
 
-```yaml
-version: "3.9"
+resource "aws_instance" "url_monitor" {
+  ami           = "ami-xxxxxxxx"
+  instance_type = "t3.micro"
 
-services:
-  url-health-monitor:
-    build: .
-    ports:
-      - "3000:3000"
-    restart: unless-stopped
-    volumes:
-      - ./backend/database:/app/backend/database
+  tags = {
+    Name = "url-health-monitor"
+  }
+}
 ```
 
-In a production cloud environment, the JSON files would be replaced by a managed PostgreSQL or MongoDB database, Docker images would be deployed automatically through a CI/CD pipeline, and HTTPS would be provided by the cloud platform.
+The application Docker image would be deployed to the EC2 instance, with:
 
+- Docker running the Node.js application
+- Nginx acting as a reverse proxy
+- HTTPS enabled using Let's Encrypt
+- Monitoring data stored in PostgreSQL or MongoDB instead of JSON files
+
+In a production cloud environment, the JSON files would be replaced by a managed PostgreSQL or MongoDB database, Docker images would be deployed automatically through a CI/CD pipeline, and HTTPS would be provided by the cloud platform.
+## Deployment Notes
+
+For a production deployment, I would:
+
+- Build a Docker image using GitHub Actions.
+- Push the image to Docker Hub or GitHub Container Registry.
+- Provision infrastructure using Terraform.
+- Deploy the container to AWS EC2, ECS, or Google Cloud Run.
+- Store monitoring data in PostgreSQL or MongoDB.
+- Configure HTTPS using a cloud load balancer or Nginx.
+- Use CloudWatch or Prometheus/Grafana for monitoring and logging.
 # Future Improvements
 
 - Delete registered URLs

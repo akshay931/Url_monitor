@@ -1,0 +1,11 @@
+services:
+  url-health-monitor:
+    build: .
+    container_name: url-health-monitor
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    restart: unless-stopped
+    volumes:
+      - ./backend/database:/app/backend/database
