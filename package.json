@@ -2,8 +2,9 @@
   "name": "uptime_monitor",
   "version": "1.0.0",
   "description": "A lightweight **URL Health Monitoring** application built with **Node.js, Express, WebSocket, Axios, and Docker**. The application periodically checks the health of registered URLs and updates the frontend in real time using WebSockets.",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
+    "start": "node backend/app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

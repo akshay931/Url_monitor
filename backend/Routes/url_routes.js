@@ -1,10 +1,9 @@
 const express = require("express");
 const fs = require("fs").promises;
-
+const path = require("path");
 const urlStoreController = require("./../models/url_store_controller");
 const healthStatusController = require("./../models/health_status_controller");
-const urlPath = "./database/urls.json";
-
+const urlPath = path.join(__dirname, "../database", "urls.json");
 const router = express.Router();
 const app = express();
 

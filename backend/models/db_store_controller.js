@@ -1,5 +1,6 @@
 const fs = require("node:fs").promises;
-const url_path = "./database/db.json";
+const path = require("path");
+const url_path = path.join(__dirname, "../database", "db.json");
 
 const StoreRecord = async (urlRecord) => {
   try {
