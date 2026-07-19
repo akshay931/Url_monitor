@@ -2,6 +2,10 @@
 
 A lightweight **URL Health Monitoring** application built with **Node.js, Express, WebSocket, Axios, and Docker**. The application periodically checks the health of registered URLs and updates the frontend in real time using WebSockets.
 
+# Live demo (deployed on Render)
+
+### https://url-monitor-fsw7.onrender.com
+
 ## Features
 
 - Real-time URL health monitoring
@@ -276,6 +280,76 @@ setInterval(async () => {
 
 ---
 
+## Testing Steps
+
+Follow the steps below to verify that the application correctly detects both **UP** and **DOWN** states in real time.
+
+### 1. Start the URL Health Monitor
+
+Launch the application using Docker (or run it locally).
+
+```bash
+docker compose up
+```
+
+### 2. Create a Test Server
+
+Duplicate `backend/app.js` and save it as `backend/app-test.js`.
+
+Change the port to **3001** (or any unused port):
+
+```javascript
+const PORT = 3001;
+```
+
+Start the test server:
+
+```bash
+node backend/app-test.js
+```
+
+### 3. Register the Test URL
+
+Add the following URL using either:
+
+- the **Add URL** form in the top-right corner of the dashboard, or
+- by appending it directly to `backend/database/urls.json`.
+
+```
+http://127.0.0.1:3001
+```
+
+A new row will be added to the monitoring table automatically, and within the next polling cycle its status should change to:
+
+```
+Status: UP
+```
+
+No page refresh is required.
+
+### 4. Verify the DOWN State
+
+Stop the test server:
+
+```bash
+Ctrl + C
+```
+
+Within the next monitoring interval, the dashboard will automatically update the same URL to:
+
+```
+Status: DOWN
+```
+
+This confirms that:
+
+- URL health checks are performed periodically.
+- Status changes are detected automatically.
+- WebSocket updates are pushed to the frontend in real time.
+- No manual page refresh is required.
+
+#
+
 # Docker Support
 
 The project can be run using Docker and Docker Compose.
@@ -313,6 +387,120 @@ http://localhost:3000
 The `backend/database` directory can be mounted as a Docker volume so that `urls.json` and `db.json` persist across container restarts.
 
 ---
+
+# Deployment Sketch
+
+## Current MVP Deployment
+
+The application is currently deployed on **Render** as a single Node.js web service.
+
+The Express application serves:
+
+- Static frontend (`index.html`, `scripts.js`)
+- REST API endpoints
+- WebSocket server
+- URL health monitoring service
+
+Monitoring data is currently stored in JSON files (`urls.json` and `db.json`) for simplicity.
+
+### High-Level Architecture
+
+```text
+                        +----------------------+
+                        |      Web Browser     |
+                        +----------+-----------+
+                                   |
+                              HTTP / WebSocket
+                                   |
+                                   v
+                 +------------------------------------+
+                 |          Render Web Service        |
+                 |------------------------------------|
+                 |                                    |
+                 |  Express.js Application            |
+                 |                                    |
+                 |  +------------------------------+  |
+                 |  | Static Frontend             |  |
+                 |  | index.html                 |  |
+                 |  | scripts.js                 |  |
+                 |  +------------------------------+  |
+                 |                                    |
+                 |  +------------------------------+  |
+                 |  | REST API                    |  |
+                 |  | GET /api/url               |  |
+                 |  | POST /api/url/register     |  |
+                 |  +------------------------------+  |
+                 |                                    |
+                 |  +------------------------------+  |
+                 |  | WebSocket Server            |  |
+                 |  | Real-time Status Updates    |  |
+                 |  +------------------------------+  |
+                 |                                    |
+                 |  +------------------------------+  |
+                 |  | Health Check Service         |  |
+                 |  | Axios Polling               |  |
+                 |  +------------------------------+  |
+                 |                                    |
+                 |        backend/database/           |
+                 |   urls.json      db.json           |
+                 +------------------------------------+
+```
+
+---
+
+# Future Cloud Deployment
+
+For a production-ready deployment, I would separate the application into managed cloud services.
+
+```text
+                    +----------------------+
+                    |      Web Browser     |
+                    +----------+-----------+
+                               |
+                          HTTPS / WSS
+                               |
+                               v
+                   +------------------------+
+                   |  Cloud Load Balancer   |
+                   +-----------+------------+
+                               |
+                               v
+                 +-------------------------------+
+                 |   Dockerized Node.js App      |
+                 |-------------------------------|
+                 | Express API                   |
+                 | Static Frontend               |
+                 | WebSocket Server              |
+                 | Health Monitoring Service     |
+                 +---------------+---------------+
+                                 |
+                +----------------+----------------+
+                |                                 |
+                v                                 v
+      +---------------------+          +----------------------+
+      | PostgreSQL/MongoDB  |          | Object Storage       |
+      | Registered URLs     |          | Monitoring History   |
+      +---------------------+          +----------------------+
+```
+
+## Infrastructure-as-Code (Example)
+
+A minimal Docker-based deployment could be provisioned using Docker Compose:
+
+```yaml
+version: "3.9"
+
+services:
+  url-health-monitor:
+    build: .
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    volumes:
+      - ./backend/database:/app/backend/database
+```
+
+In a production cloud environment, the JSON files would be replaced by a managed PostgreSQL or MongoDB database, Docker images would be deployed automatically through a CI/CD pipeline, and HTTPS would be provided by the cloud platform.
 
 # Future Improvements
 
