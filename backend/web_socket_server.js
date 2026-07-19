@@ -6,7 +6,6 @@ const { StoreRecord } = require("./models/db_store_controller");
 const { checkUrl } = require("./models/health_status_controller");
 
 const { init, broadcast } = require("./utils/utils");
-// const urlPath = "./database/urls.json";
 const urlPath = path.join(__dirname, "database", "urls.json");
 dotenv.config();
 
@@ -35,11 +34,17 @@ const checkAllUrl = async (Store) => {
 async function setupWebSocket(wss) {
   init(wss);
   let Store = [];
-  checkAllUrl(Store);
-  setInterval(async () => {
-    Store = [];
+  wss.on("connection", (ws) => {
     checkAllUrl(Store);
-  }, 2000);
+  });
+
+  setInterval(
+    async () => {
+      Store = [];
+      checkAllUrl(Store);
+    },
+    process.env.TIME || 60 * 1000,
+  );
 }
 
 module.exports = { setupWebSocket };

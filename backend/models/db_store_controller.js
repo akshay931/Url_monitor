@@ -4,6 +4,12 @@ const url_path = path.join(__dirname, "../database", "db.json");
 
 const StoreRecord = async (urlRecord) => {
   try {
+    try {
+      await fs.access(url_path);
+    } catch {
+      await fs.writeFile(url_path, "[]");
+    }
+
     const rawData = await fs.readFile(url_path, "utf8");
     const data = JSON.parse(rawData);
 
