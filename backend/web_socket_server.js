@@ -10,41 +10,42 @@ const urlPath = path.join(__dirname, "database", "urls.json");
 dotenv.config();
 
 const checkAllUrl = async (Store) => {
-  try {
-    const urls = await fs.readFile(urlPath, "utf8");
-    const parsedUrls = JSON.parse(urls);
+	try {
+		const urls = await fs.readFile(urlPath, "utf8");
+		const parsedUrls = JSON.parse(urls);
 
-    await Promise.allSettled(
-      parsedUrls.map(async (url) => {
-        const response = await checkUrl(url);
-        broadcast(response);
-        Store.push(response);
-      }),
-    );
-    StoreRecord(Store);
-    broadcast({ type: "checking" });
-  } catch (err) {
-    console.error("WebSocket polling error:", err.message);
-    broadcast({
-      type: "error",
-      message: "Unable to read urls.json or parse data",
-    });
-  }
+		await Promise.allSettled(
+			parsedUrls.map(async (url) => {
+				const response = await checkUrl(url);
+				broadcast(response);
+				Store.push(response);
+			}),
+		);
+		StoreRecord(Store);
+		broadcast({ type: "checking" });
+	} catch (err) {
+		console.error("WebSocket polling error:", err.message);
+		broadcast({
+			type: "error",
+			message: "Unable to read urls.json or parse data",
+		});
+	}
 };
 async function setupWebSocket(wss) {
-  init(wss);
-  let Store = [];
-  wss.on("connection", (ws) => {
-    checkAllUrl(Store);
-  });
+	init(wss);
+	let Store = [];
+	wss.on("connection", (ws) => {
+		checkAllUrl(Store);
+	});
 
-  setInterval(
-    async () => {
-      Store = [];
-      checkAllUrl(Store);
-    },
-    process.env.TIME || 60 * 1000,
-  );
+	setInterval(
+
+		async () => {
+			Store = [];
+			checkAllUrl(Store);
+		},
+		process.env.TIME || 60 * 1000,
+	);
 }
 
 module.exports = { setupWebSocket };
