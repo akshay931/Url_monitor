@@ -1,0 +1,15 @@
+{
+  "name": "uptime_monitor",
+  "version": "1.0.0",
+  "description": "simple url status monitor application",
+  "license": "ISC",
+  "author": "akshay vadher",
+  "type": "commonjs",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2"
+  }
+}

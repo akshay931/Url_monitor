@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL HEALTH MONITOR</title>
+    <script src="scripts.js" defer></script>
+</head>
+
+<body>
+    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+
+        <div>
+            <h1>URL HEALTH MONITOR</h1>
+
+            <h4>WebSocket: <span id="websocket_status">Connecting...</span></h4>
+
+            <h4 id="status"></h4>
+        </div>
+
+        <div style="border:1px solid #ccc;padding:10px;border-radius:5px;">
+            <h3>Add URL</h3>
+
+            <input type="text" id="urlInput" placeholder="https://example.com">
+
+            <button id="addBtn">
+                Add
+            </button>
+        </div>
+
+    </div>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>URL</th>
+                <th>Status</th>
+                <th>Status Code</th>
+                <th>Response Time</th>
+                <th>Error</th>
+            </tr>
+        </thead>
+        <tbody id="content-display"></tbody>
+    </table>
+
+
+</body>
+
+</html>
